@@ -42,30 +42,60 @@
         <div class="left">
           <div class="tools">
             <div class="tools-group">
-              <button @click="headingClick" type="button" class="tool-btn"><i class="fa fa-header"></i></button>
-              <button @click="fontClick('bold')" type="button" class="tool-btn"><i class="fa fa-bold"></i></button>
-              <button @click="fontClick('italic')" type="button" class="tool-btn"><i class="fa fa-italic"></i></button>
-              <button @click="fontClick('underline')" type="button" class="tool-btn"><i class="fa fa-underline"></i></button>
-              <button @click="fontClick('strikethrough')" type="button" class="tool-btn"><i class="fa fa-strikethrough"></i></button>
+              <el-tooltip class="item" effect="dark" content="标题和正文" placement="bottom">
+                <button @click="headingClick" type="button" class="tool-btn"><i class="fa fa-header"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="粗体" placement="bottom">
+                <button @click="fontClick('bold')" type="button" class="tool-btn"><i class="fa fa-bold"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="斜体" placement="bottom">
+               <button @click="fontClick('italic')" type="button" class="tool-btn"><i class="fa fa-italic"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="下划线" placement="bottom">
+                <button @click="fontClick('underline')" type="button" class="tool-btn"><i class="fa fa-underline"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="删除线" placement="bottom">
+                <button @click="fontClick('strikethrough')" type="button" class="tool-btn"><i class="fa fa-strikethrough"></i></button>
+              </el-tooltip>
             </div>
             <div class="tools-group">
-              <button v-popover:popover-link type="button" class="tool-btn"><i class="fa fa-link"></i></button>
-              <button @click="unLinkClick" type="button" class="tool-btn"><i class="fa fa-chain-broken"></i></button>
-              <button v-popover:popover-img type="button" class="tool-btn"><i class="fa fa-picture-o"></i></button>
-              <button @click="quoteClick" type="button" class="tool-btn"><i class="fa  fa-quote-left"></i></button>
+              <el-tooltip class="item" effect="dark" content="插入链接" placement="bottom">
+                <button v-popover:popover-link type="button" class="tool-btn"><i class="fa fa-link"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="取消链接" placement="bottom">
+                <button @click="unLinkClick" type="button" class="tool-btn"><i class="fa fa-chain-broken"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="插入图片" placement="bottom">
+                <button v-popover:popover-img type="button" class="tool-btn"><i class="fa fa-picture-o"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="插入引用" placement="bottom">
+                <button @click="quoteClick" type="button" class="tool-btn"><i class="fa  fa-quote-left"></i></button>
+              </el-tooltip>
               <!-- <button type="button" class="tool-btn"><i class="fa  fa-table"></i></button> -->
             </div>
             <div class="tools-group">
-              <button  @click="alignClick('justifyCenter')" type="button" class="tool-btn"><i class="fa fa-align-center"></i></button>
-              <button  @click="alignClick('justifyLeft')" type="button" class="tool-btn"><i class="fa fa-align-left"></i></button>
-              <button  @click="alignClick('justifyRight')" type="button" class="tool-btn"><i class="fa fa-align-right"></i></button>
-              <button  @click="alignClick('justifyFull')" type="button" class="tool-btn"><i class="fa fa-align-justify"></i></button>
+              <el-tooltip class="item" effect="dark" content="左对齐" placement="bottom">
+                <button  @click="alignClick('justifyLeft')" type="button" class="tool-btn"><i class="fa fa-align-left"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="居中对齐" placement="bottom">
+                <button  @click="alignClick('justifyCenter')" type="button" class="tool-btn"><i class="fa fa-align-center"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="右对齐" placement="bottom">
+                <button  @click="alignClick('justifyRight')" type="button" class="tool-btn"><i class="fa fa-align-right"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="两端对齐" placement="bottom">
+                <button  @click="alignClick('justifyFull')" type="button" class="tool-btn"><i class="fa fa-align-justify"></i></button>
+              </el-tooltip>
             </div>
             <div class="tools-group">
                 <!-- <button type="button" class="tool-btn"><i class="fa fa-list-ol"></i></button>
                 <button type="button" class="tool-btn"><i class="fa fa-list-ul"></i></button> -->
+              <el-tooltip class="item" effect="dark" content="文本缩进" placement="bottom">
                 <button @click="dentClick('indent')"  type="button" class="tool-btn"><i class="fa fa-indent"></i></button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="取消缩进" placement="bottom">
                 <button @click="dentClick('outdent')" type="button" class="tool-btn"><i class="fa fa-outdent"></i></button>
+              </el-tooltip>
             </div>
           </div>
         </div>
@@ -415,6 +445,8 @@ export default {
               padding:0 10px;
               border-radius:2px; 
               cursor: pointer;
+              background: #FFF;
+              transition: background .3s;
               &:hover{
                 background: #EEE;
               }

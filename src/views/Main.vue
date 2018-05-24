@@ -1,0 +1,460 @@
+<template>
+  <div class="page-main">
+    <!--输入链接-->
+    <el-popover ref="popover-link" v-model="link.show" @show="showLink" placement="bottom" width="200" trigger="click">
+      <div class="link-wrap">
+        <div class="link-item">
+          <input class="input" v-model="link.text"/>
+        </div>
+        <div class="link-item" style="margin-top:10px;">
+          <input class="input" ref="url" placeholder="链接地址"/>
+        </div>
+        <div class="link-item" style="margin-top:10px;">
+          <button class="button button-primary button-min" @click="insertLink">确认</button>
+          <button class="button button-min" @click="link.show = false">取消</button>
+        </div>
+      </div>
+    </el-popover>
+    <!--输入链接-->
+    <!--上传图片-->
+    <el-popover ref="popover-img" v-model="img.show" @show="showImg" placement="bottom" width="200" trigger="click">
+      <div class="img-wrap">
+        <div class="img-item" v-show="!img.isLink">
+          <div class="btn-upload">
+            <span>上传图片</span>
+            <input ref="imgfile" type="file" accept="image/png,image/jpg,image/jpeg" @change="changeFile">
+          </div>
+        </div>
+        <div class="img-item" v-show="!img.isLink" style="margin-top:10px;">
+          <button class="button button-full" @click="img.isLink = true">网络图片</button>
+        </div>
+        <div class="img-item" v-show="img.isLink">
+            <input class="input" ref="img" placeholder="图片地址"/>
+        </div>
+        <div class="img-item" v-show="img.isLink" style="margin-top:10px;">
+          <button class="button button-primary button-min" @click="insertImg">确认</button>
+          <button class="button button-min" @click="img.isLink = false">取消</button>
+        </div>
+      </div>
+    </el-popover>
+    <!--上传图片-->
+      <div class="top">
+        <div class="left">
+          <div class="tools">
+            <div class="tools-group">
+              <button @click="headingClick" type="button" class="tool-btn"><i class="fa fa-header"></i></button>
+              <button @click="fontClick('bold')" type="button" class="tool-btn"><i class="fa fa-bold"></i></button>
+              <button @click="fontClick('italic')" type="button" class="tool-btn"><i class="fa fa-italic"></i></button>
+              <button @click="fontClick('underline')" type="button" class="tool-btn"><i class="fa fa-underline"></i></button>
+              <button @click="fontClick('strikethrough')" type="button" class="tool-btn"><i class="fa fa-strikethrough"></i></button>
+            </div>
+            <div class="tools-group">
+              <button v-popover:popover-link type="button" class="tool-btn"><i class="fa fa-link"></i></button>
+              <button @click="unLinkClick" type="button" class="tool-btn"><i class="fa fa-chain-broken"></i></button>
+              <button v-popover:popover-img type="button" class="tool-btn"><i class="fa fa-picture-o"></i></button>
+              <button @click="quoteClick" type="button" class="tool-btn"><i class="fa  fa-quote-left"></i></button>
+              <!-- <button type="button" class="tool-btn"><i class="fa  fa-table"></i></button> -->
+            </div>
+            <div class="tools-group">
+              <button  @click="alignClick('justifyCenter')" type="button" class="tool-btn"><i class="fa fa-align-center"></i></button>
+              <button  @click="alignClick('justifyLeft')" type="button" class="tool-btn"><i class="fa fa-align-left"></i></button>
+              <button  @click="alignClick('justifyRight')" type="button" class="tool-btn"><i class="fa fa-align-right"></i></button>
+              <button  @click="alignClick('justifyFull')" type="button" class="tool-btn"><i class="fa fa-align-justify"></i></button>
+            </div>
+            <div class="tools-group">
+                <!-- <button type="button" class="tool-btn"><i class="fa fa-list-ol"></i></button>
+                <button type="button" class="tool-btn"><i class="fa fa-list-ul"></i></button> -->
+                <button @click="dentClick('indent')"  type="button" class="tool-btn"><i class="fa fa-indent"></i></button>
+                <button @click="dentClick('outdent')" type="button" class="tool-btn"><i class="fa fa-outdent"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="right">
+           <button class="button button-primary" type="button"><i class="fa fa-paper-plane"></i> 发布</button>
+        </div>
+      </div>
+      <div class="content">
+         <div class="title">
+            <input v-model="title" type="text" >
+         </div>
+          <div class="editor"
+               ref="editor"
+               @blur="blurEditor"
+               @keyup.enter="enter"
+               @input="change"
+               @paste="paste"
+               contenteditable="true">
+            <p><br></p>
+          </div>
+      </div>
+  </div>
+</template>
+<script>
+export default {
+  data(){
+    return {
+      range:null,
+      title:'New document',
+      content:'<p><br></p>',
+      link:{
+        text:'链接',
+        url:'',
+        show:false
+      },
+      img:{
+        show:false,
+        isLink:false
+      }
+    }
+  },
+  mounted(){
+      this.$nextTick(()=>{
+        this.$refs.editor.focus();
+     });
+  },
+  methods:{
+    change(){
+      let html = this.$refs.editor.innerHTML;
+      if(html == ''){
+        this.$refs.editor.innerHTML = "<p><br></p>";
+      }
+      this.content = html;
+      this.range = window.getSelection().getRangeAt(0);
+      //console.log(this.range);
+    },
+    //enter键
+    enter(e){
+      document.execCommand('formatBlock', false, 'P');
+      let node = this.range.commonAncestorContainer;
+      if(node.className == 'editor'){
+        return false;
+      }
+      while(node.tagName != 'P'){
+        node = node.parentNode;
+      }
+      //console.log(this.range);
+      //清除stye样式
+      node.removeAttribute('style');
+      node.removeAttribute('class');
+      if(node.children[0]&&node.children[0].tagName == 'B'){
+          node.innerHTML = node.innerText;
+      }
+      if(node.children[0]&&node.children[0].tagName == 'I'){
+          node.innerHTML = node.innerText;
+      }
+      if(node.children[0]&&node.children[0].tagName == 'U'){
+          node.innerHTML = node.innerText;
+      }
+      if(node.children[0]&&node.children[0].tagName == 'STRIKE'){
+          node.innerHTML = node.innerText;
+      }
+    },
+    //显示插入链接
+    showLink(){
+       if(this.range){
+         this.link.text = this.range.toString()||'链接';
+         if(this.range.commonAncestorContainer.parentNode.href){
+          this.link.href = this.range.commonAncestorContainer.parentNode.href;
+          this.$refs.url.value = this.link.href;
+         }else{
+           this.link.href = '';
+           this.$refs.url.value = '';
+         } 
+       }
+    },
+    //点击插入链接
+    insertLink(){
+      if(this.range){
+        this.link.url = this.$refs.url.value;
+        if(!/^http(s)?:\/\/(.*)?$/.test(this.link.url)){
+          this.$message.error("请输入链接");
+          return false;
+        }
+        let newNode = document.createElement("a");
+        newNode.setAttribute("href",this.link.url);
+        newNode.appendChild(document.createTextNode(this.link.text));
+        this.range.deleteContents();
+        this.range.insertNode(newNode);
+        this.link.show = false;
+      }else{
+        return false;
+      }
+    },
+    //取消链接
+    unLinkClick(){
+      document.execCommand('unlink', false, null);
+    },
+    //显示图片
+    showImg(){
+      this.img.isLink = false;
+      this.$refs.img.value = '';
+    },
+    //插入网络图片
+    insertImg(){
+      if(this.range){
+          let node  = this.range.commonAncestorContainer;
+          if(node.className == 'editor'){
+            console.log('123');
+            return false;
+          }
+          while(node.parentNode.className != 'editor'){
+            node = node.parentNode
+          }
+        if(node.tagName == 'H1'){
+          this.$message.error("标题不支持插入图片");
+          return false;
+        }
+        if(node.tagName == 'BLOCKQUOTE'){
+          this.$message.error("引用不支持插入图片");
+          return false;
+        }
+        let imgUrl = this.$refs.img.value;
+        if(!/^http(s)?:\/\/(.*)$/.test(imgUrl)){
+          this.$message.error("请图片链接");
+          return false;
+        }
+        let newNode = document.createElement("img");
+        newNode.setAttribute("src",imgUrl);
+        this.range.deleteContents();
+        this.range.insertNode(newNode);
+        this.img.show = false;
+      }
+    },
+    //上传图片
+    changeFile(e){
+      console.log(e.target.files[0]);
+      this.$refs.imgfile.value = '';
+      if(this.range){
+        let node  = this.range.commonAncestorContainer;
+        if(node.className == 'editor'){
+          console.log('123');
+          return false;
+        }
+        while(node.parentNode.className != 'editor'){
+          node = node.parentNode
+        }
+       if(node.tagName == 'H1'){
+         this.$message.error("标题不支持插入图片");
+         return false;
+       }
+       if(node.tagName == 'BLOCKQUOTE'){
+         this.$message.error("引用不支持插入图片");
+         return false;
+       }
+        let src = "http://video.yingtu.co/8/image/288559ae-3365-4130-b9dc-b7a5ef187dea.jpg";
+        let newNode = document.createElement("img");
+        newNode.setAttribute("src",src);
+        this.range.deleteContents();
+        this.range.insertNode(newNode);
+        this.img.show = false;
+      }else{
+        return false;
+      }
+    },
+    //点击标题
+    headingClick(){
+      let formatBlock = document.queryCommandValue("formatBlock");
+      if(formatBlock == 'h1'){  
+        document.execCommand('formatBlock', false, 'P');
+      }else{
+        document.execCommand('formatBlock', false, 'H1');
+      }
+    },
+    //引用
+    quoteClick(){
+      let formatBlock = document.queryCommandValue("formatBlock");
+      console.log(formatBlock);
+      if(formatBlock == 'blockquote'){  
+        document.execCommand('formatBlock', false, 'P');
+      }else{
+        document.execCommand('formatBlock', false, 'BLOCKQUOTE');
+      }
+    },
+    //字样式
+    fontClick(fontStyle){
+      document.execCommand(fontStyle, false, null);
+    },
+    //点击按钮
+    alignClick(align){
+      document.execCommand(align,false,null);
+    },
+    dentClick(dent){
+      console.log(this.range);
+      let node = this.range.commonAncestorContainer;
+      if(node.className == 'editor'){
+        return false;
+      }
+      while(node.tagName != 'P'){
+        node = node.parentNode;
+      }
+      if(dent == 'indent'){
+        node.setAttribute('class',dent);
+      }else{
+        //清除stye样式
+        node.removeAttribute('class');
+      }
+    },
+    //失去焦点保存rang
+    blurEditor(){
+      this.range = window.getSelection().getRangeAt(0);
+    },
+    //粘贴事件
+    paste(e){
+      e.preventDefault();
+      e.stopPropagation();
+      let clipboardData = e.clipboardData || window.clipboardData;
+      for(let i = 0; i < clipboardData.items.length; i++){
+        console.log(clipboardData.items[i]);
+      }
+      let text = clipboardData.getData('text/plain');
+      document.execCommand("insertText",false, text);
+    }
+  }
+}
+</script>
+<style>
+.editor > p{
+  margin: 15px 0;
+  font-size: 16px;
+  line-height: 24px;
+}
+.editor > .indent{
+  text-indent: 2em;
+}
+.editor > h1{
+  margin: 15px 0;
+  font-size: 26px;
+  font-weight: normal;
+  line-height: 32px;
+}
+.editor > blockquote{
+  margin: 15px 0;
+  padding: 10px;
+  background: #EEE;
+  font-size: 16px;
+  line-height: 24px;
+  border-left:3px solid #CCC;
+}
+.editor img{
+  vertical-align: top;
+  max-width: 100%;
+}
+.editor a{
+  color: #25b864;
+}
+.link-wrap > .link-item > .input{
+  width: 200px;
+  height: 30px;
+  padding: 0 10px;
+  outline: none;
+  box-sizing: border-box;
+  border: 1px solid #CCC;
+}
+.img-wrap > .img-item > .input{
+  width: 200px;
+  height: 30px;
+  padding: 0 10px;
+  outline: none;
+  box-sizing: border-box;
+  border: 1px solid #CCC;
+}
+.img-wrap > .img-item > .btn-upload{
+  width: 100%;
+  height: 40px;
+  background: #25b864;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  line-height: 40px;
+  color: #FFF;
+  border-radius:2px; 
+}
+.btn-upload > input{
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 200px;
+  cursor: pointer;
+  opacity: 0;
+  z-index: 1;
+}
+</style>
+<style lang="less" scoped>
+.page-main{
+  background: #fafafa;
+  padding-top:60px; 
+  padding-bottom:40px;
+  >.top{
+    position: fixed;
+    top: 0;
+    display: flex;
+     width: 100%;
+     height: 60px;
+     overflow: hidden;
+     padding: 10px;
+     box-sizing: border-box;
+     border-bottom:1px solid #E6E6E6;
+     background: #FFF;
+     .left{
+       flex: 1;
+       padding-left: 50px;
+       .tools{
+         height: 40px;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         word-break: break-all;
+         >.tools-group{
+           display: inline-block;
+           padding: 0 20px;
+           &+.tools-group{
+             border-left:1px solid #E6E6E6;
+           }
+            >.tool-btn{
+              height: 40px;
+              min-width: 40px;
+              padding:0 10px;
+              border-radius:2px; 
+              cursor: pointer;
+              &:hover{
+                background: #EEE;
+              }
+            }
+         }
+       }
+     }
+  }
+  >.content{
+     margin:20px auto 0;
+     width: 100%;
+     max-width: 1000px;
+     height: auto;
+     box-sizing: border-box;
+     background: #FFF;
+     box-shadow: 0 1px 2px rgba(0,0,0,.2);
+     .title{
+        padding: 40px;
+        border-bottom:1px solid #E6E6E6; 
+        input{
+             width: 100%;
+             height: 40px;
+             border: none;
+             outline: none;
+             font-size: 36px;
+             font-weight: bold;
+        }
+     }
+     .editor{
+       padding: 40px;
+       width: 100%;
+       box-sizing: border-box;
+       height: auto;
+       min-height: calc(100vh - 200px);
+       outline: none;
+       white-space: pre-wrap;
+       word-wrap: break-word;
+     }
+  }
+}
+</style>
+
+

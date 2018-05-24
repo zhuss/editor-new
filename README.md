@@ -20,4 +20,5 @@ npm run build --report
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
+手写富文本编辑器也是可以的
 [https://zhuss.github.io/editor-new/dist/index.html#/](https://zhuss.github.io/editor-new/dist/index.html#/)

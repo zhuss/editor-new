@@ -110,9 +110,12 @@
           <div class="editor"
                ref="editor"
                @blur="blurEditor"
+               @keyup="keyup"
                @keyup.enter="enter"
                @input="change"
                @paste="paste"
+               @focus="focus"
+               @mouseup="mouseup"
                contenteditable="true">
             <p><br></p>
           </div>
@@ -143,6 +146,17 @@ export default {
      });
   },
   methods:{
+    focus(){
+      this.range = window.getSelection().getRangeAt(0);
+    },
+    mouseup(){
+      this.range = window.getSelection().getRangeAt(0);
+      console.log(window.getSelection());
+    },
+    keyup(){
+       this.range = window.getSelection().getRangeAt(0);
+    },
+    //input事件
     change(){
       let html = this.$refs.editor.innerHTML;
       if(html == ''){
@@ -150,7 +164,6 @@ export default {
       }
       this.content = html;
       this.range = window.getSelection().getRangeAt(0);
-      //console.log(this.range);
     },
     //enter键
     enter(e){
@@ -224,7 +237,6 @@ export default {
       if(this.range){
           let node  = this.range.commonAncestorContainer;
           if(node.className == 'editor'){
-            console.log('123');
             return false;
           }
           while(node.parentNode.className != 'editor'){
@@ -450,6 +462,9 @@ export default {
               &:hover{
                 background: #EEE;
               }
+            }
+            .tool-btn[disabled]{
+              opacity: .5;
             }
          }
        }

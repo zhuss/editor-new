@@ -7,10 +7,10 @@
           <input class="input" v-model="link.text"/>
         </div>
         <div class="link-item" style="margin-top:10px;">
-          <input class="input" ref="url" placeholder="链接地址"/>
+          <input class="input" ref="url" @input="urlInput" placeholder="链接地址"/>
         </div>
         <div class="link-item" style="margin-top:10px;">
-          <button class="button button-primary button-min" @click="insertLink">确认</button>
+          <button :disabled="!link.isUrl" class="button button-primary button-min" @click="insertLink">确认</button>
           <button class="button button-min" @click="link.show = false">取消</button>
         </div>
       </div>
@@ -29,10 +29,10 @@
           <button class="button button-full" @click="img.isLink = true">网络图片</button>
         </div>
         <div class="img-item" v-show="img.isLink">
-            <input class="input" ref="img" placeholder="图片地址"/>
+            <input @input="imgLinkInput" class="input" ref="img" placeholder="图片地址"/>
         </div>
         <div class="img-item" v-show="img.isLink" style="margin-top:10px;">
-          <button class="button button-primary button-min" @click="insertImg">确认</button>
+          <button :disabled="!img.isImgLink" class="button button-primary button-min" @click="insertImg">确认</button>
           <button class="button button-min" @click="img.isLink = false">取消</button>
         </div>
       </div>
@@ -132,11 +132,13 @@ export default {
       link:{
         text:'链接',
         url:'',
+        isUrl:false,
         show:false
       },
       img:{
         show:false,
-        isLink:false
+        isLink:false,
+        isImgLink:false
       }
     }
   },
@@ -147,10 +149,9 @@ export default {
   },
   methods:{
     focus(){
-      this.range = window.getSelection().getRangeAt(0);
+      this.range = window.getSelection().rangeCount&&window.getSelection().getRangeAt(0);
     },
     mouseup(){
-     console.log(window.getSelection());
       this.range = window.getSelection().getRangeAt(0);
     },
     keyup(){
@@ -196,13 +197,24 @@ export default {
        if(this.range){
          this.link.text = this.range.toString()||'链接';
          if(this.range.commonAncestorContainer.parentNode.href){
-          this.link.href = this.range.commonAncestorContainer.parentNode.href;
-          this.$refs.url.value = this.link.href;
+           this.link.href = '';
+           this.$refs.url.value = '';
+           this.link.isUrl = false;
+           if(!this.range.collapsed){
+              this.link.href = this.range.commonAncestorContainer.parentNode.href;
+              this.$refs.url.value = this.link.href;
+              this.link.isUrl = true;
+           }
          }else{
            this.link.href = '';
            this.$refs.url.value = '';
+           this.link.isUrl = false;
          } 
        }
+    },
+    //检查链接地址
+    urlInput(e){
+      this.link.isUrl = /^http(s)?:\/\/(.*)?$/.test(e.target.value);
     },
     //点击插入链接
     insertLink(){
@@ -226,10 +238,15 @@ export default {
     unLinkClick(){
       document.execCommand('unlink', false, null);
     },
-    //显示图片
+    //显示插入图片
     showImg(){
       this.img.isLink = false;
       this.$refs.img.value = '';
+      this.img.isImgLink = false;
+    },
+    //验证图片地址
+    imgLinkInput(e){
+       this.img.isImgLink = /^http(s)?:\/\/(.*)?$/.test(e.target.value);
     },
     //插入网络图片
     insertImg(){

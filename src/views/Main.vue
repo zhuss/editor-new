@@ -150,8 +150,8 @@ export default {
       this.range = window.getSelection().getRangeAt(0);
     },
     mouseup(){
+     console.log(window.getSelection());
       this.range = window.getSelection().getRangeAt(0);
-      console.log(window.getSelection());
     },
     keyup(){
        this.range = window.getSelection().getRangeAt(0);
@@ -175,7 +175,6 @@ export default {
       while(node.tagName != 'P'){
         node = node.parentNode;
       }
-      //console.log(this.range);
       //清除stye样式
       node.removeAttribute('style');
       node.removeAttribute('class');

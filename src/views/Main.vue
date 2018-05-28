@@ -60,16 +60,16 @@
             </div>
             <div class="tools-group">
               <el-tooltip class="item" effect="dark" content="插入链接" placement="bottom">
-                <button v-popover:popover-link :disabled="formatBlock!='p'" type="button" class="tool-btn"><i class="fa fa-link"></i></button>
+                <button v-popover:popover-link type="button" class="tool-btn"><i class="fa fa-link"></i></button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="取消链接" placement="bottom">
                 <button @click="unLinkClick" type="button" class="tool-btn"><i class="fa fa-chain-broken"></i></button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="插入图片" placement="bottom">
-                <button v-popover:popover-img :disabled="formatBlock!='p'"  type="button" class="tool-btn"><i class="fa fa-picture-o"></i></button>
+                <button v-popover:popover-img  type="button" class="tool-btn"><i class="fa fa-picture-o"></i></button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="插入引用" placement="bottom">
-                <button :disabled="formatBlock!='p'&&formatBlock!='blockquote'"  @click="quoteClick" type="button" class="tool-btn"><i class="fa  fa-quote-left"></i></button>
+                <button  @click="quoteClick" type="button" class="tool-btn"><i class="fa  fa-quote-left"></i></button>
               </el-tooltip>
               <!-- <button type="button" class="tool-btn"><i class="fa  fa-table"></i></button> -->
             </div>
@@ -139,8 +139,7 @@ export default {
         show:false,
         isLink:false,
         isImgLink:false
-      },
-      formatBlock:''
+      }
     }
   },
   mounted(){
@@ -151,11 +150,9 @@ export default {
   methods:{
     focus(){
       this.range = window.getSelection().rangeCount&&window.getSelection().getRangeAt(0);
-      this.formatBlock =  document.queryCommandValue("formatBlock");
     },
     mouseup(){
       this.range = window.getSelection().getRangeAt(0);
-      this.formatBlock =  document.queryCommandValue("formatBlock");
     },
     keyup(){
        this.range = window.getSelection().getRangeAt(0);

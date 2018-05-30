@@ -135,13 +135,17 @@ export default {
         isUrl:false,
         show:false
       },
-      document:document,
       img:{
         show:false,
         isLink:false,
         isImgLink:false
       }
     }
+  },
+  watch:{
+     range(value){
+       console.log(value);
+     }
   },
   mounted(){
       this.$nextTick(()=>{
@@ -151,18 +155,12 @@ export default {
   methods:{
     focus(){
       this.range = window.getSelection().rangeCount&&window.getSelection().getRangeAt(0);
-      this.document = document;
     },
     mouseup(){
       this.range = window.getSelection().getRangeAt(0);
-      this.document = document;
-      console.log("!23123");
-      return false;
     },
     keyup(){
        this.range = window.getSelection().getRangeAt(0);
-       this.document = document;
-       return false;
     },
     //input事件
     change(){
@@ -172,7 +170,6 @@ export default {
       }
       this.content = html;
       this.range = window.getSelection().getRangeAt(0);
-      this.document = document;
     },
     //enter键
     enter(e){
@@ -346,7 +343,6 @@ export default {
       document.execCommand(align,false,null);
     },
     dentClick(dent){
-      console.log(this.range);
       let node = this.range.commonAncestorContainer;
       if(node.className == 'editor'){
         return false;

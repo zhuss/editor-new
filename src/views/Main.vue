@@ -142,11 +142,6 @@ export default {
       }
     }
   },
-  watch:{
-     range(value){
-       console.log(value);
-     }
-  },
   mounted(){
       this.$nextTick(()=>{
         this.$refs.editor.focus();
@@ -285,12 +280,10 @@ export default {
     },
     //上传图片
     changeFile(e){
-      console.log(e.target.files[0]);
       this.$refs.imgfile.value = '';
       if(this.range){
         let node  = this.range.commonAncestorContainer;
         if(node.className == 'editor'){
-          console.log('123');
           return false;
         }
         while(node.parentNode.className != 'editor'){
@@ -366,11 +359,38 @@ export default {
       e.preventDefault();
       e.stopPropagation();
       let clipboardData = e.clipboardData || window.clipboardData;
-      for(let i = 0; i < clipboardData.items.length; i++){
-        console.log(clipboardData.items[i]);
-      }
-      let text = clipboardData.getData('text/plain');
-      document.execCommand("insertText",false, text);
+      let pasteHtml = clipboardData.getData('text/html');
+      let pasteText = clipboardData.getData('text/plain');
+      // 过滤无用标签
+      pasteHtml = pasteHtml.replace(/<meta.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<script.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<link.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/style=".+?"/g,'');
+      pasteHtml = pasteHtml.replace(/class=".+?"/g,'');
+      pasteHtml = pasteHtml.replace(/\n|\r/g,'');
+      pasteHtml = pasteHtml.replace(/data-click="{.+?}"/g,'');
+      pasteHtml = pasteHtml.replace(/<h[2|3|4|5|6].+?>/g,'<p>');
+      pasteHtml = pasteHtml.replace(/<\/h[2|3|4|5|6]>/g,'</p>');
+      pasteHtml = pasteHtml.replace(/<div.+?>/g,'<p>');
+      pasteHtml = pasteHtml.replace(/<\/div>/g,'</p>');
+      pasteHtml = pasteHtml.replace(/<span.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<\/span>/g,'');
+      pasteHtml = pasteHtml.replace(/<em.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<\/em>/g,'');
+      pasteHtml = pasteHtml.replace(/<button.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<\/button>/g,'');
+      pasteHtml = pasteHtml.replace(/<svg>.+?<\/svg>/g,'');
+      pasteHtml = pasteHtml.replace(/<table.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<\/table>/g,'');
+      pasteHtml = pasteHtml.replace(/<thead.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<\/thead>/g,'');
+      pasteHtml = pasteHtml.replace(/<tbody.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<\/tbody>/g,'');
+      pasteHtml = pasteHtml.replace(/<tr.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<\/tr>/g,'');
+      pasteHtml = pasteHtml.replace(/<td.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<\/td>/g,'');
+      document.execCommand('insertHTML',false,pasteHtml);
     }
   }
 }

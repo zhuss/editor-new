@@ -362,34 +362,45 @@ export default {
       let pasteHtml = clipboardData.getData('text/html');
       let pasteText = clipboardData.getData('text/plain');
       // 过滤无用标签
+      pasteHtml = pasteHtml.replace(/\n|\r/g,''); //过滤换行
       pasteHtml = pasteHtml.replace(/<meta.+?>/g,'');
-      pasteHtml = pasteHtml.replace(/<script.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<script.+?>.+?<\/script>/g,'');
+      pasteHtml = pasteHtml.replace(/<style.+?>.+?<\/style>/g,'');
       pasteHtml = pasteHtml.replace(/<link.+?>/g,'');
-      pasteHtml = pasteHtml.replace(/style=".+?"/g,'');
       pasteHtml = pasteHtml.replace(/class=".+?"/g,'');
-      pasteHtml = pasteHtml.replace(/\n|\r/g,'');
-      pasteHtml = pasteHtml.replace(/data-click="{.+?}"/g,'');
-      pasteHtml = pasteHtml.replace(/<h[2|3|4|5|6].+?>/g,'<p>');
-      pasteHtml = pasteHtml.replace(/<\/h[2|3|4|5|6]>/g,'</p>');
-      pasteHtml = pasteHtml.replace(/<div.+?>/g,'<p>');
+      pasteHtml = pasteHtml.replace(/style=".+?"/g,'');
+      pasteHtml = pasteHtml.replace(/data-.+?".+?"/g,'');
+      pasteHtml = pasteHtml.replace(/<input.+?>/g,'');//过滤input
+      pasteHtml = pasteHtml.replace(/<div.+?>/g,'<p>'); //div
       pasteHtml = pasteHtml.replace(/<\/div>/g,'</p>');
-      pasteHtml = pasteHtml.replace(/<span.+?>/g,'');
-      pasteHtml = pasteHtml.replace(/<\/span>/g,'');
-      pasteHtml = pasteHtml.replace(/<em.+?>/g,'');
-      pasteHtml = pasteHtml.replace(/<\/em>/g,'');
-      pasteHtml = pasteHtml.replace(/<button.+?>/g,'');
-      pasteHtml = pasteHtml.replace(/<\/button>/g,'');
-      pasteHtml = pasteHtml.replace(/<svg>.+?<\/svg>/g,'');
-      pasteHtml = pasteHtml.replace(/<table.+?>/g,'');
-      pasteHtml = pasteHtml.replace(/<\/table>/g,'');
-      pasteHtml = pasteHtml.replace(/<thead.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<h[2|3|4|5|6].+?>/g,'<p>');//h
+      pasteHtml = pasteHtml.replace(/<\/h[2|3|4|5|6]>/g,'</p>');
+      pasteHtml = pasteHtml.replace(/<ul.+?>/g,'<p>'); //ul
+      pasteHtml = pasteHtml.replace(/<\/ul>/g,'</p>');
+      pasteHtml = pasteHtml.replace(/<ol.+?>/g,'<p>'); //ol
+      pasteHtml = pasteHtml.replace(/<\/ol>/g,'</p>');
+      pasteHtml = pasteHtml.replace(/<li.+?>/g,'<p>'); //li
+      pasteHtml = pasteHtml.replace(/<\/li>/g,'</p>');
+      pasteHtml = pasteHtml.replace(/<dl.+?>/g,'<p>'); //dl
+      pasteHtml = pasteHtml.replace(/<\/dl>/g,'</p>');
+      pasteHtml = pasteHtml.replace(/<dt.+?>/g,''); //dt
+      pasteHtml = pasteHtml.replace(/<\/dt>/g,'');
+      pasteHtml = pasteHtml.replace(/<dd.+?>/g,''); //dd
+      pasteHtml = pasteHtml.replace(/<\/dd>/g,'');
+      pasteHtml = pasteHtml.replace(/<table.+?>/g,'<p>'); //table
+      pasteHtml = pasteHtml.replace(/<\/table>/g,'</p>');
+      pasteHtml = pasteHtml.replace(/<thead.+?>/g,''); //table
       pasteHtml = pasteHtml.replace(/<\/thead>/g,'');
-      pasteHtml = pasteHtml.replace(/<tbody.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<tbody.+?>/g,''); //tbody
       pasteHtml = pasteHtml.replace(/<\/tbody>/g,'');
-      pasteHtml = pasteHtml.replace(/<tr.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<tr.+?>/g,''); //tr
       pasteHtml = pasteHtml.replace(/<\/tr>/g,'');
-      pasteHtml = pasteHtml.replace(/<td.+?>/g,'');
+      pasteHtml = pasteHtml.replace(/<td.+?>/g,''); //tr
       pasteHtml = pasteHtml.replace(/<\/td>/g,'');
+      pasteHtml = pasteHtml.replace(/<button.+?>/g,''); //button
+      pasteHtml = pasteHtml.replace(/<\/button>/g,'');
+      pasteHtml = pasteHtml.replace(/<svg.*?>.*?<\/svg>/g,'');
+      console.log(pasteHtml);
       document.execCommand('insertHTML',false,pasteHtml);
     }
   }
